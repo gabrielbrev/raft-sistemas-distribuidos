@@ -19,9 +19,10 @@
 1. [Política de Colaboração no Trabalho](#política-de-colaboração-no-trabalho)
 2. [Descrição do Código](#descrição-do-código)
 3. [Ferramentas Utilizadas](#ferramentas-utilizadas)
-4. [Dificuldades Encontradas](#dificuldades-encontradas)
-5. [Lições Aprendidas](#lições-aprendidas)
-6. [Referências Bibliográficas](#referências-bibliográficas)
+4. [Resultados dos Testes](#resultados-dos-testes)
+5. [Dificuldades Encontradas](#dificuldades-encontradas)
+6. [Lições Aprendidas](#lições-aprendidas)
+7. [Referências Bibliográficas](#referências-bibliográficas)
 
 ---
 
@@ -209,6 +210,36 @@ $ go test -run 2A
 ```
 
 Esta configuração foi necessária porque o projeto utiliza a estrutura de workspace Go tradicional (modo `GOPATH`) ao invés do sistema de módulos Go mais recente (`GO111MODULE`), e o caminho precisava apontar para a raiz do repositório clonado.
+
+---
+
+# Resultados dos Testes
+
+O programa foi testado utilizando o teste 2A, que verifica o mecanismo de eleição do líder e envio de heartbeats.
+
+## Execução dos Testes
+
+**[INSERIR IMAGEM: Screenshot da execução do teste]**
+_Figura: Captura de tela mostrando a execução bem-sucedida dos testes do Lab 2A._
+_Comando executado: `go test -run 2A`_
+
+O programa passou em todas as verificações de testes do Lab 2A:
+
+```
+Test (2A): initial election ...
+  ... Passed
+Test (2A): election after network failure ...
+  ... Passed
+PASS
+ok  raft  8.225s
+```
+
+Os resultados "Passed" indicam que o algoritmo está implementado corretamente de acordo com as especificações do Raft para eleição de líder. O teste verifica:
+
+-   **Initial election**: Se um único líder é eleito corretamente quando o sistema é iniciado
+-   **Election after network failure**: Se um novo líder assume o controle quando o líder anterior falha ou perde comunicação
+
+O tempo de execução ficou entre 7-9 segundos, demonstrando que os timeouts estão adequadamente calibrados para satisfazer os requisitos do laboratório.
 
 ---
 
