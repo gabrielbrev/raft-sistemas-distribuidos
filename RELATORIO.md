@@ -240,6 +240,31 @@ A entrega foi feita utilizando exclusivamente funcionalidades da linguagem Go, c
 
 Aproveitou-se as implementações já presentes no código base referentes ao protocolo de comunicação RPC. Implementou-se as funções que foram disponibilizadas de maneira incompleta, para que o código pudesse atender aos requisitos do teste 2A.
 
+### Configuração do Ambiente
+
+Durante a configuração inicial do ambiente de desenvolvimento, foi necessário ajustar a forma de execução dos testes. A especificação do trabalho sugeria configurar as variáveis de ambiente da seguinte forma:
+
+```bash
+$ export GOROOT=<Local de instalação do Go>
+$ export PATH=$PATH:$GOROOT/bin
+$ export GOPATH=$HOME/451
+$ cd $GOPATH
+$ cd src/raft
+$ go test -run 2A
+```
+
+Entretanto, esta abordagem não funcionou diretamente no ambiente macOS utilizado. Foi necessário adaptar o processo de execução, utilizando o script `setenv.sh` fornecido no repositório base e ajustando o `GOPATH` para o diretório correto do projeto:
+
+```bash
+$ cd <diretório-do-projeto>
+$ export GO111MODULE=off
+$ export GOPATH="$(pwd)"
+$ cd src/raft
+$ go test -run 2A
+```
+
+Esta configuração foi necessária porque o projeto utiliza a estrutura de workspace Go tradicional (modo `GOPATH`) ao invés do sistema de módulos Go mais recente (`GO111MODULE`), e o caminho precisava apontar para a raiz do repositório clonado.
+
 ---
 
 # Testes
