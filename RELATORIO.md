@@ -17,7 +17,7 @@
 # Sumário
 
 1. [Política de Colaboração no Trabalho](#política-de-colaboração-no-trabalho)
-2. [Descrição do Código](#descrição-do-código)
+2. [Descrição da Implementação](#descrição-da-implementação)
 3. [Ferramentas Utilizadas](#ferramentas-utilizadas)
 4. [Resultados dos Testes](#resultados-dos-testes)
 5. [Dificuldades Encontradas](#dificuldades-encontradas)
@@ -28,19 +28,13 @@
 
 # Política de Colaboração no Trabalho
 
-O trabalho foi desenvolvido de forma colaborativa por **Luiz** e **Gabriel**, com participação ativa de ambos em todas as etapas do projeto.
+O trabalho foi desenvolvido de forma colaborativa por **Gabriel** e **Luiz**, com participação ativa de ambos em todas as etapas do projeto, mantendo comunicação constante e revisão mútua do trabalho.
 
-Gabriel focou principalmente nas atividades de **implementação do código**, incluindo a estruturação do algoritmo Raft, desenvolvimento das funções de eleição de líder, heartbeats, e resolução de problemas técnicos relacionados a concorrência e race conditions.
+**Gabriel** concentrou seus esforços principalmente na parte técnica do projeto, sendo responsável pela implementação do algoritmo Raft, desenvolvimento das funções e estruturas necessárias, resolução de problemas relacionados à concorrência e sincronização, e configuração do ambiente de desenvolvimento.
 
-Luiz concentrou seus esforços na **escrita e formatação do documento**, elaborando as seções teóricas, documentação técnica, análise de resultados e consolidação das lições aprendidas.
+**Luiz** dedicou-se especialmente à documentação e organização do trabalho, elaborando o relatório técnico, consolidando as informações sobre ferramentas utilizadas, dificuldades encontradas e lições aprendidas, além de estruturar e formatar o documento final.
 
-Ambos os membros contribuíram ativamente para:
-
--   Configuração do ambiente de desenvolvimento
--   Estudo do algoritmo Raft e materiais de referência
--   Execução e análise dos testes
--   Identificação e resolução de dificuldades
--   Revisão final do código e do relatório
+Ambos os membros trabalharam em conjunto no estudo do algoritmo Raft, execução e validação dos testes, discussão das soluções para os problemas encontrados, e revisão final tanto do código quanto da documentação. Todo o código implementado foi escrito pelos autores, com exceção do código base fornecido pelo laboratório, seguindo rigorosamente a política de colaboração estabelecida na especificação do trabalho.
 
 ---
 
@@ -261,7 +255,7 @@ Dentre as dificuldades encontradas, as principais foram:
 
 7. **Múltiplos Líderes**: Em alguns casos, mais de um servidor se declarava líder no mesmo termo devido a condições de corrida.
 
-8. **Ajuste de Parâmetros**: Encontrar valores adequados para timeouts que satisfizessem as restrições (máximo 10 heartbeats por segundo e eleição completa em menos de 5 segundos).
+8. **Ajuste de Parâmetros**: Encontrar valores adequados para timeouts que satisfizessem as restrições (não enviar mais que 10 heartbeats por segundo para não sobrecarregar a rede, e garantir eleição completa em menos de 5 segundos).
 
 ## Como as Dificuldades Foram Contornadas
 
@@ -269,7 +263,7 @@ Para contornar as dificuldades, foram adotadas as seguintes estratégias:
 
 -   **Estudo da Linguagem Go**: Busca de conhecimento através da documentação oficial [GO], tutoriais e guias [W3] para entender suas principais funcionalidades, especialmente relacionadas a concorrência e sincronização.
 
--   **Estudo do Algoritmo**: Uso intensivo dos materiais disponibilizados na descrição do trabalho [RA], em especial a **Figura 2 da versão estendida do artigo sobre Raft** e o guia ilustrado. Com isso, foi possível compreender o algoritmo de maneira muito didática, funcionando na prática.
+-   **Estudo do Algoritmo**: Uso intensivo dos materiais disponibilizados na descrição do trabalho [RA], incluindo o artigo original do Raft e guias ilustrados disponíveis online. Com isso, foi possível compreender o algoritmo de maneira didática e aplicá-lo na prática.
 
 -   **Proteção de Seções Críticas**: Garantia de que todos os acessos a variáveis compartilhadas ocorram dentro de seções protegidas por `mutex`.
 
@@ -300,7 +294,7 @@ As lições aprendidas estão relacionadas a:
     - Gerenciamento de timeouts aleatórios
     - Envio de heartbeats periódicos
     - Maneiras de garantir consistência de dados entre diferentes nós
-    - Importância de seguir rigorosamente a Figura 2 do paper
+    - Importância de seguir rigorosamente as especificações do algoritmo
 
 3. **Programação Concorrente**:
 
