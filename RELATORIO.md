@@ -17,14 +17,11 @@
 # Sumário
 
 1. [Política de Colaboração no Trabalho](#política-de-colaboração-no-trabalho)
-2. [O Algoritmo Raft](#o-algoritmo-raft)
-3. [Objetivo do Trabalho](#objetivo-do-trabalho)
-4. [Descrição do Código](#descrição-do-código)
-5. [Ferramentas Utilizadas](#ferramentas-utilizadas)
-6. [Testes](#testes)
-7. [Dificuldades Encontradas](#dificuldades-encontradas)
-8. [Lições Aprendidas](#lições-aprendidas)
-9. [Referências Bibliográficas](#referências-bibliográficas)
+2. [Descrição do Código](#descrição-do-código)
+3. [Ferramentas Utilizadas](#ferramentas-utilizadas)
+4. [Dificuldades Encontradas](#dificuldades-encontradas)
+5. [Lições Aprendidas](#lições-aprendidas)
+6. [Referências Bibliográficas](#referências-bibliográficas)
 
 ---
 
@@ -46,55 +43,7 @@ Ambos os membros contribuíram ativamente para:
 
 ---
 
-# O Algoritmo Raft
-
-Um algoritmo de consenso com a proposta de ser mais compreensível que o algoritmo proposto por Lamport, o Paxos, descrito originalmente na dissertação "In Search of an Understandable Consensus Algorithm" publicada por Diego Ongaro e John Ousterhout, da Universidade de Stanford.
-
-**"Raft"** é uma sigla derivada do inglês que significa "Replicated And Fault Tolerant" ("Replicado e tolerante a falhas", em tradução livre). Apesar do uso do Paxos em diversas aplicações, o Raft se propõe a oferecer uma base melhor para a construção e educação em Sistemas Distribuídos, com um algoritmo mais simples, descrito de forma a facilitar o entendimento dos procedimentos.
-
-Sendo um algoritmo de consenso, tem o objetivo de fazer com que os nós de um sistema concordem com uma sequência de eventos (entries) e mantenham um estado consistente de logs pela troca de mensagens via chamadas remotas de procedimento (RPC). É projetado para resistir à perda eventual de mensagens na transmissão, falhas de servidores, garantindo a replicação dos dados e a tolerância a falhas.
-
-O Raft possui três fundamentos: a **eleição do líder**, a **replicação de logs** e a **segurança**. Esses princípios, embora interconectados, podem ser estudados separadamente, contribuindo para a facilidade de aprendizado e aplicação do algoritmo.
-
-## Funcionamento Básico
-
-No Raft, há vários servidores que podem estar em um dos três estados não fixos: **líder**, **seguidor** ou **candidato**. A transição entre os estados é recorrente e essencial à integridade do sistema. Inicialmente, todos os servidores começam como seguidores. Cada nó possui um temporizador aleatório e distinto chamado timeout, que expira se não receber mensagens de um líder ativo. Se expirar, o nó se torna candidato e solicita votos dos outros nós para se tornar líder. Caso um nó receba a maioria dos votos primeiro, ele é eleito como o novo líder do sistema.
-
-**[INSERIR IMAGEM 1: Diagrama de Estados do Raft]**
-_Figura 1: Estados dos servidores no Raft (Follower, Candidate, Leader) e transições entre eles._
-_Fonte: Artigo "In Search of an Understandable Consensus Algorithm (Extended Version)" - Figura 4_
-
-Um líder é responsável por enviar mensagens periódicas, chamadas de **heartbeats**, aos seguidores. Essas mensagens confirmam que o líder está ativo e funcionando adequadamente. Além disso, o líder recebe solicitações de clientes, armazena-as no log local e inicia o processo de replicação para os seguidores. Os seguidores respondem aos heartbeats confirmando que estão sincronizados.
-
-## Terms e Comunicação
-
-Cada período de liderança no Raft é identificado por um número chamado **term**, que funciona como um marcador lógico de tempo. Esse número é incrementado sempre que um novo líder é eleito. Se um líder ou candidato descobre que outro nó possui um term mais recente, ele abdica de sua posição e se torna seguidor. Isso assegura que haja no máximo um líder ativo por vez.
-
-**[INSERIR IMAGEM 2: Timeline de Terms]**
-_Figura 2: Timeline mostrando a evolução de terms e eleições ao longo do tempo._
-_Fonte: Artigo "In Search of an Understandable Consensus Algorithm (Extended Version)" - Figura 5_
-
-A comunicação entre os servidores é realizada através de duas chamadas via RPC: **RequestVote** e **AppendEntries**. A primeira é usada durante a eleição para solicitar votos dos seguidores, enquanto a segunda é utilizada para replicar entradas de log e enviar os heartbeats.
-
-Além disso, o algoritmo garante que as operações sejam aplicadas de forma consistente em todos os nós. Para isso, o líder só confirma a execução de uma operação após receber confirmações de que a maioria dos nós atualizou seus logs. Essa abordagem garante que, se a maioria dos nós estiver operando normalmente, o sistema funciona de maneira consistente e coesa.
-
-Com esses mecanismos, o Raft simplifica a implementação de sistemas distribuídos enquanto mantém robustez, tornando-se uma alternativa eficaz e compreensível ao Paxos.
-
----
-
-# Objetivo do Trabalho
-
-Baseado nos conhecimentos de aula e nos materiais disponibilizados sobre o algoritmo Raft, deseja-se estudar o algoritmo e propor funções na linguagem Go que implementam as funcionalidades do algoritmo Raft no caso de eleição de um líder, levando em consideração possíveis falhas que possam ocorrer em algum componente do sistema. Reportando, ao final, os resultados obtidos neste documento.
-
-## Tarefa
-
-Implementar eleição de líder e heartbeats (RPCs AppendEntries sem entradas no log) conforme a especificação do Raft. O objetivo é que um único líder seja eleito, que o líder continue sendo o líder se não houver falhas e que um novo líder assuma o controle se o antigo líder falhar ou se os pacotes de/para o antigo líder forem perdidos.
-
-Deve-se executar `go test -run 2A` para testar o código.
-
----
-
-# Descrição do Código
+# Descrição da Implementação
 
 ## Estruturas Adicionadas
 
@@ -200,10 +149,6 @@ Gerencia o timer de eleição, fazendo com que um nó inicie uma eleição caso 
 -   `func (rf *Raft) resetElectionTimeout()`: Reseta o timer de eleição
 -   `func (rf *Raft) broadcastHeartbeat()`: Envia heartbeat para todos os peers (usado por sendHeartbeats)
 
-**[INSERIR IMAGEM 3: Figura 2 do Paper - Resumo do Algoritmo Raft]**
-_Figura 3: Resumo condensado do algoritmo de consenso Raft com todas as regras de implementação._
-_Fonte: Artigo "In Search of an Understandable Consensus Algorithm (Extended Version)" - Figura 2_
-
 ---
 
 # Ferramentas Utilizadas
@@ -214,7 +159,7 @@ A entrega foi feita utilizando exclusivamente funcionalidades da linguagem Go, c
 
 -   **Go (Golang)**: Linguagem de programação principal
 -   **Sistema Operacional**: macOS
--   **Editor**: Visual Studio Code com extensão Go
+-   **Editor**: Visual Studio Code
 
 ### Bibliotecas Importadas
 
@@ -253,7 +198,7 @@ $ cd src/raft
 $ go test -run 2A
 ```
 
-Entretanto, esta abordagem não funcionou diretamente no ambiente macOS utilizado. Foi necessário adaptar o processo de execução, utilizando o script `setenv.sh` fornecido no repositório base e ajustando o `GOPATH` para o diretório correto do projeto:
+Entretanto, esta abordagem não funcionou diretamente no ambiente macOS utilizado. Foi necessário criar um script `setenv.sh` customizado e ajustar o `GOPATH` para o diretório correto do projeto:
 
 ```bash
 $ cd <diretório-do-projeto>
@@ -264,54 +209,6 @@ $ go test -run 2A
 ```
 
 Esta configuração foi necessária porque o projeto utiliza a estrutura de workspace Go tradicional (modo `GOPATH`) ao invés do sistema de módulos Go mais recente (`GO111MODULE`), e o caminho precisava apontar para a raiz do repositório clonado.
-
----
-
-# Testes
-
-O teste alvo é o 2A, que trata do mecanismo de eleição do líder e disparo de heartbeats.
-
-## Resultados Obtidos
-
-O programa passou em todas as verificações de testes do Lab 2A:
-
-**[INSERIR IMAGEM 4: Screenshot dos Testes 2A Passando]**
-_Figura 4: Captura de tela mostrando a execução bem-sucedida dos testes do Lab 2A._
-_Comando executado: `go test -run 2A`_
-
-```
-Test (2A): initial election ...
-  ... Passed
-Test (2A): election after network failure ...
-  ... Passed
-PASS
-ok  raft  8.225s
-```
-
-### Execução com Race Detection
-
-**[INSERIR IMAGEM 5: Screenshot dos Testes com Race Detection]**
-_Figura 5: Captura de tela mostrando a execução dos testes com detecção de race conditions._
-_Comando executado: `go test -run 2A -race`_
-
-```
-Test (2A): initial election ...
-  ... Passed
-Test (2A): election after network failure ...
-  ... Passed
-PASS
-ok  raft  9.314s
-```
-
-### Análise dos Resultados
-
-Os retornos "Passed" indicam que o programa passou em cada verificação de testes. Todas as execuções atingiram 100% de aceitação pelo teste 2A descrito, indicando que o algoritmo está implementado de acordo com as especificações do funcionamento da eleição de um líder no algoritmo.
-
-**Estatísticas**:
-
--   **Taxa de Sucesso**: 100% em múltiplas execuções consecutivas (10+ execuções)
--   **Tempo de Execução**: Intervalo entre 7,4s a 9,3s
--   **Race Conditions**: 0 detectadas após correções
 
 ---
 
